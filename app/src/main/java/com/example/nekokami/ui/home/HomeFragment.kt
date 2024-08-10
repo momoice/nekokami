@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.nekokami.R
@@ -68,7 +69,11 @@ class HomeFragment : Fragment() {
             var charIndex = 0
             override fun run() {
                 if (charIndex < messages[messageIndex].length) {
-                    textView.text = messages[messageIndex].substring(0, charIndex + 1)
+                    // \n を <br> に置換してから HtmlCompat.fromHtml() に渡す
+                    textView.text = HtmlCompat.fromHtml(
+                        messages[messageIndex].substring(0, charIndex + 1).replace("\n", "<br>"),
+                        HtmlCompat.FROM_HTML_MODE_LEGACY
+                    )
                     charIndex++
                     handler.postDelayed(this, 50)
                     layout.setOnClickListener(null)
@@ -84,7 +89,7 @@ class HomeFragment : Fragment() {
                             if (messageIndex < messages.size) {
                                 charIndex = 0
                                 textView.text = ""
-                                displayMessage(textView, layout, button, messages, false) // 初回起動フラグをfalseにする
+                                displayMessage(textView, layout, button, messages, false)
                             }
                             // すべてのセリフを表示し終わったら、初回起動フラグをfalseに
                             val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
@@ -110,11 +115,12 @@ class HomeFragment : Fragment() {
         val dailyTask = getDailyTask()
 
         val messages = arrayOf(
-            "やっほー！\nまた会ったね！",
+            "やっほー！\n今日も来たね！",
+            "それじゃあ、\n今日の課題を発表するね！",
             "今日の課題は\n【${dailyTask}】だよ！\n達成できるかな？"
         )
         messageIndex = 0
-        displayMessage(textView, layout, binding.button3, messages, false) // 初回起動フラグをfalseに設定
+        displayMessage(textView, layout, binding.button3, messages, false)
     }
 
     private fun getDailyTask(): String {
