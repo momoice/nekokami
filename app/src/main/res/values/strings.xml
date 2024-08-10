@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">nekokami</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_home">お告げの場</string>
+    <string name="title_dashboard">成長記録</string>
 </resources>
