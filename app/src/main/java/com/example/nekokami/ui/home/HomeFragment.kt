@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.nekokami.R
@@ -49,14 +48,14 @@ class HomeFragment : Fragment() {
             "それじゃあ、今日からよろしくね！",
             "下の「契約」ボタンを押して\n僕と契約しよう！",
             "それじゃあ、\n今日の課題を発表するね！",
-            "今日の課題は\n<big>【${getDailyTask()}】</big>だよ！\n達成できるかな？"
+            "今日の課題は\n【${getDailyTask()}】だよ！\n達成できるかな？" // <big>タグを削除
         )
 
         val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
         val isFirstLaunch = sharedPrefs.getBoolean("isFirstLaunch", true)
 
         if (isFirstLaunch) {
-            displayMessage(textView, constraintLayout, button3, messages, isFirstLaunch) // 初回起動フラグを渡す
+            displayMessage(textView, constraintLayout, button3, messages, isFirstLaunch)
         } else {
             displayDailyTask(textView, constraintLayout)
         }
@@ -85,7 +84,7 @@ class HomeFragment : Fragment() {
                             if (messageIndex < messages.size) {
                                 charIndex = 0
                                 textView.text = ""
-                                displayMessage(textView, layout, button, messages)
+                                displayMessage(textView, layout, button, messages, false) // 初回起動フラグをfalseにする
                             }
                             // すべてのセリフを表示し終わったら、初回起動フラグをfalseに
                             val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
@@ -108,15 +107,15 @@ class HomeFragment : Fragment() {
     }
 
     private fun displayDailyTask(textView: TextView, layout: ConstraintLayout) {
-        val dailyTask = getDailyTask() // 今日の課題を取得
+        val dailyTask = getDailyTask()
 
         val messages = arrayOf(
             "やっほー！\n今日も来たね！",
             "それじゃあ、\n今日の課題を発表するね！",
-            "今日の課題は\n<big>【${dailyTask}】</big>だよ！\n達成できるかな？"
+            "今日の課題は\n【${dailyTask}】だよ！\n達成できるかな？"
         )
         messageIndex = 0
-        displayMessage(textView, layout, binding.button3, messages)
+        displayMessage(textView, layout, binding.button3, messages, false) // 初回起動フラグをfalseにする
     }
 
     private fun getDailyTask(): String {
