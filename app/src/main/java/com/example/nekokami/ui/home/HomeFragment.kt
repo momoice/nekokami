@@ -45,10 +45,10 @@ class HomeFragment : Fragment() {
             "その課題をやればやるほど\nぼくも君も、成長していくんだ！",
             "課題を達成したら、\n「できた」ボタンを押してね！",
             "嘘をついたり、さぼったりしたら\nどうなるかわかってるよね...？",
-            "それじゃあ、今日からよろしくね！",
             "下の「契約」ボタンを押して\n僕と契約しよう！",
+            "ありがとう！\n今日からよろしくね！",
             "それじゃあ、\n今日の課題を発表するね！",
-            "今日の課題は\n【${getDailyTask()}】だよ！\n達成できるかな？" // <big>タグを削除
+            "今日の課題は\n【${getDailyTask()}】だよ！\n達成できるかな？"
         )
 
         val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
@@ -76,7 +76,7 @@ class HomeFragment : Fragment() {
                     // 現在のセリフの表示が完了
 
                     // 初回起動時 かつ 契約ボタンを押す直前のセリフの場合のみボタンを表示
-                    if (isFirstLaunch && messageIndex == messages.size - 2) {
+                    if (isFirstLaunch && messageIndex == 8) {
                         button.visibility = View.VISIBLE
                         button.setOnClickListener {
                             button.visibility = View.INVISIBLE
@@ -110,12 +110,11 @@ class HomeFragment : Fragment() {
         val dailyTask = getDailyTask()
 
         val messages = arrayOf(
-            "やっほー！\n今日も来たね！",
-            "それじゃあ、\n今日の課題を発表するね！",
+            "やっほー！\nまた会ったね！",
             "今日の課題は\n【${dailyTask}】だよ！\n達成できるかな？"
         )
         messageIndex = 0
-        displayMessage(textView, layout, binding.button3, messages, false) // 初回起動フラグをfalseにする
+        displayMessage(textView, layout, binding.button3, messages, false) // 初回起動フラグをfalseに設定
     }
 
     private fun getDailyTask(): String {
