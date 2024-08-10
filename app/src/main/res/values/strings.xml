@@ -4,29 +4,37 @@
     <string name="title_dashboard">成長記録</string>
 
     <string name="task_1">靴を磨く</string>
-    <string name="task_2">コンビニでお釣りを募金する</string>
+    <string name="task_2">コンビニでお釣りを
+        募金する</string>
     <string name="task_3">食事を腹八分におさえる</string>
-    <string name="task_4">人が欲しがっているものを先取りする</string>
+    <string name="task_4">人が欲しがっているものを
+        先取りする</string>
     <string name="task_5">会った人を笑わせる</string>
     <string name="task_6">トイレ掃除をする</string>
     <string name="task_7">まっすぐ帰宅する</string>
     <string name="task_8">その日頑張れた自分を褒める</string>
     <string name="task_9">1日何かをやめてみる</string>
-    <string name="task_10">決めたことを続けるための環境を作る</string>
-    <string name="task_11">毎朝全身鏡を見て身なりを整える</string>
+    <string name="task_10">決めたことを続けるための
+        環境を作る</string>
+    <string name="task_11">毎朝全身鏡を見て
+        身なりを整える</string>
     <string name="task_12">自分が1番得意なことを人に聞く</string>
     <string name="task_13">自分が苦手なことを人に聞く</string>
     <string name="task_14">夢を楽しく想像する</string>
     <string name="task_15">運がいいと口に出して言う</string>
     <string name="task_16">ただでもらう</string>
     <string name="task_17">明日の準備をする</string>
-    <string name="task_18">身近にいる1番大切な人を喜ばせる</string>
-    <string name="task_19">誰か1人のいいところを見つけて褒める</string>
+    <string name="task_18">身近にいる
+        1番大切な人を喜ばせる</string>
+    <string name="task_19">誰か1人のいいところを
+        見つけて褒める</string>
     <string name="task_20">人の長所を盗む</string>
     <string name="task_21">求人情報を見る</string>
     <string name="task_22">お参りに行く</string>
-    <string name="task_23">人気店に入り、人気の理由を観察する</string>
-    <string name="task_24">やらずに後悔していることを今日から始める</string>
+    <string name="task_23">人気店に入り、
+        人気の理由を観察する</string>
+    <string name="task_24">やらずに後悔していることを
+        今日から始める</string>
     <string name="task_25">サービスとして夢を語る</string>
     <string name="task_26">人の成功をサポートする</string>
     <string name="task_27">応募する</string>
@@ -65,14 +73,16 @@
     <string name="task_60">聞き手を使わない</string>
     <string name="task_61">やったことないことをする</string>
     <string name="task_62">自分を労る</string>
-    <string name="task_63">ごめんの代わりにありがとうと言う</string>
+    <string name="task_63">ごめんの代わりに
+        ありがとうと言う</string>
     <string name="task_64">食器を洗う</string>
     <string name="task_65">ランニングをする</string>
     <string name="task_66">布団を整える</string>
     <string name="task_67">姿勢を正す</string>
     <string name="task_68">人より先に挨拶をする</string>
     <string name="task_69">人と話す</string>
-    <string name="task_70">他の人から助けられていることを見つける</string>
+    <string name="task_70">他の人から助けられていることを
+        見つける</string>
     <string name="task_71">自国語以外の言葉を聞く</string>
     <string name="task_72">何かを学ぶ</string>
     <string name="task_73">何かを受け入れる</string>
