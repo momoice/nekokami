@@ -7,6 +7,7 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
@@ -29,7 +30,8 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
         val textView: TextView = binding.homeTextMessage
-        val constraintLayout: ConstraintLayout = binding.root // ConstraintLayoutを取得
+        val constraintLayout: ConstraintLayout = binding.root
+        val button3: Button = binding.button3
 
         val messages = arrayOf(
             "こんにちは！\nぼくは猫神様！",
@@ -40,14 +42,16 @@ class HomeFragment : Fragment() {
             "その課題をやればやるほど\nぼくも君も、成長していくんだ！",
             "課題を達成したら、\n「できた」ボタンを押してね！",
             "嘘をついたり、さぼったりしたら\nどうなるかわかってるよね...？",
-            "それじゃあ、今日からよろしくね！"
+            "それじゃあ、今日からよろしくね！",
+            "下の「契約」ボタンを押して\n僕と契約しよう！",
+            "それじゃあ、\n今日の課題を発表するよ！"
         )
 
         val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
         val isFirstLaunch = sharedPrefs.getBoolean("isFirstLaunch", true)
 
         if (isFirstLaunch) {
-            displayMessage(textView, constraintLayout, messages) // ConstraintLayoutを渡す
+            displayMessage(textView, constraintLayout, button3, messages)
         } else {
             // 初回起動でない場合の処理 (課題表示など)
         }
@@ -55,28 +59,39 @@ class HomeFragment : Fragment() {
         return root
     }
 
-    private fun displayMessage(textView: TextView, layout: ConstraintLayout, messages: Array<String>) {
+    private fun displayMessage(textView: TextView, layout: ConstraintLayout, button: Button, messages: Array<String>) {
         val runnable = object : Runnable {
             var charIndex = 0
             override fun run() {
                 if (charIndex < messages[messageIndex].length) {
                     textView.text = messages[messageIndex].substring(0, charIndex + 1)
                     charIndex++
-                    handler.postDelayed(this, 50) // 50ミリ秒ごとに次の文字を表示
+                    handler.postDelayed(this, 50)
                 } else {
                     // 現在のセリフの表示が完了
-                    layout.setOnClickListener {
-                        messageIndex++
-                        if (messageIndex < messages.size) {
-                            charIndex = 0 // 次のセリフの表示を初期化
-                            textView.text = "" // TextViewをクリア
-                            handler.post(this) // 次のセリフの表示を開始
-                        } else {
+
+                    if (messageIndex == messages.size - 2) { // "契約"ボタンを押すセリフの場合
+                        button.visibility = View.VISIBLE
+                        button.setOnClickListener {
+                            button.visibility = View.INVISIBLE
+                            messageIndex++
+                            if (messageIndex < messages.size) { // 範囲チェック
+                                charIndex = 0
+                                textView.text = ""
+                                displayMessage(textView, layout, button, messages) // 次のセリフを表示開始
+                            }
                             // すべてのセリフを表示し終わったら、初回起動フラグをfalseに
                             val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
                             sharedPrefs.edit().putBoolean("isFirstLaunch", false).apply()
-                            layout.setOnClickListener(null) // タップリスナーを解除
-                            // 以降の処理 (課題表示など)
+                        }
+                    } else {
+                        layout.setOnClickListener {
+                            messageIndex++
+                            if (messageIndex < messages.size) {
+                                charIndex = 0
+                                textView.text = ""
+                                handler.post(this)
+                            }
                         }
                     }
                 }
@@ -88,6 +103,6 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        handler.removeCallbacksAndMessages(null) // Handlerの処理を停止
+        handler.removeCallbacksAndMessages(null)
     }
 }
