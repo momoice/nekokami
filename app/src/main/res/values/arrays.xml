@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="tasks">
+        <item>@string/task_1</item>
+        <item>@string/task_2</item>
+        <item>@string/task_3</item>
+        <item>@string/task_4</item>
+        <item>@string/task_5</item>
+        <item>@string/task_6</item>
+        <item>@string/task_7</item>
+        <item>@string/task_8</item>
+        <item>@string/task_9</item>
+        <item>@string/task_10</item>
+        <item>@string/task_11</item>
+        <item>@string/task_12</item>
+        <item>@string/task_13</item>
+        <item>@string/task_14</item>
+        <item>@string/task_15</item>
+        <item>@string/task_16</item>
+        <item>@string/task_17</item>
+        <item>@string/task_18</item>
+        <item>@string/task_19</item>
+        <item>@string/task_20</item>
+        <item>@string/task_21</item>
+        <item>@string/task_22</item>
+        <item>@string/task_23</item>
+        <item>@string/task_24</item>
+        <item>@string/task_25</item>
+        <item>@string/task_26</item>
+        <item>@string/task_27</item>
+        <item>@string/task_28</item>
+    </string-array>
+</resources>

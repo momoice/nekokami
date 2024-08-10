@@ -10,9 +10,13 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.nekokami.R
 import com.example.nekokami.databinding.FragmentHomeBinding
+import java.text.SimpleDateFormat
+import java.util.*
 
 class HomeFragment : Fragment() {
 
@@ -44,22 +48,23 @@ class HomeFragment : Fragment() {
             "嘘をついたり、さぼったりしたら\nどうなるかわかってるよね...？",
             "それじゃあ、今日からよろしくね！",
             "下の「契約」ボタンを押して\n僕と契約しよう！",
-            "それじゃあ、\n今日の課題を発表するよ！"
+            "それじゃあ、\n今日の課題を発表するね！",
+            "今日の課題は\n<big>【${getDailyTask()}】</big>だよ！\n達成できるかな？"
         )
 
         val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
         val isFirstLaunch = sharedPrefs.getBoolean("isFirstLaunch", true)
 
         if (isFirstLaunch) {
-            displayMessage(textView, constraintLayout, button3, messages)
+            displayMessage(textView, constraintLayout, button3, messages, isFirstLaunch) // 初回起動フラグを渡す
         } else {
-            // 初回起動でない場合の処理 (課題表示など)
+            displayDailyTask(textView, constraintLayout)
         }
 
         return root
     }
 
-    private fun displayMessage(textView: TextView, layout: ConstraintLayout, button: Button, messages: Array<String>) {
+    private fun displayMessage(textView: TextView, layout: ConstraintLayout, button: Button, messages: Array<String>, isFirstLaunch: Boolean = false) {
         val runnable = object : Runnable {
             var charIndex = 0
             override fun run() {
@@ -67,24 +72,26 @@ class HomeFragment : Fragment() {
                     textView.text = messages[messageIndex].substring(0, charIndex + 1)
                     charIndex++
                     handler.postDelayed(this, 50)
+                    layout.setOnClickListener(null)
                 } else {
                     // 現在のセリフの表示が完了
 
-                    if (messageIndex == messages.size - 2) { // "契約"ボタンを押すセリフの場合
+                    // 初回起動時 かつ 契約ボタンを押す直前のセリフの場合のみボタンを表示
+                    if (isFirstLaunch && messageIndex == messages.size - 2) {
                         button.visibility = View.VISIBLE
                         button.setOnClickListener {
                             button.visibility = View.INVISIBLE
                             messageIndex++
-                            if (messageIndex < messages.size) { // 範囲チェック
+                            if (messageIndex < messages.size) {
                                 charIndex = 0
                                 textView.text = ""
-                                displayMessage(textView, layout, button, messages) // 次のセリフを表示開始
+                                displayMessage(textView, layout, button, messages)
                             }
                             // すべてのセリフを表示し終わったら、初回起動フラグをfalseに
                             val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
                             sharedPrefs.edit().putBoolean("isFirstLaunch", false).apply()
                         }
-                    } else {
+                    } else { // それ以外の場合は画面タップで次に進む
                         layout.setOnClickListener {
                             messageIndex++
                             if (messageIndex < messages.size) {
@@ -98,6 +105,45 @@ class HomeFragment : Fragment() {
             }
         }
         handler.post(runnable)
+    }
+
+    private fun displayDailyTask(textView: TextView, layout: ConstraintLayout) {
+        val dailyTask = getDailyTask() // 今日の課題を取得
+
+        val messages = arrayOf(
+            "やっほー！\n今日も来たね！",
+            "それじゃあ、\n今日の課題を発表するね！",
+            "今日の課題は\n<big>【${dailyTask}】</big>だよ！\n達成できるかな？"
+        )
+        messageIndex = 0
+        displayMessage(textView, layout, binding.button3, messages)
+    }
+
+    private fun getDailyTask(): String {
+        val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
+        val lastTaskDate = sharedPrefs.getString("lastTaskDate", "") ?: ""
+        val lastThreeTasks = sharedPrefs.getStringSet("lastThreeTasks", mutableSetOf()) ?: mutableSetOf()
+
+        val today = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
+        if (lastTaskDate == today) {
+            // 今日の課題はすでに表示済みなので、保存されている課題を返す
+            return sharedPrefs.getString("dailyTask", "") ?: ""
+        } else {
+            // 新しい課題を選択
+            val availableTasks = resources.getStringArray(R.array.tasks).toMutableList()
+            availableTasks.removeAll(lastThreeTasks) // 過去3日間の課題を除外
+
+            val randomTask = availableTasks.random() // ランダムに課題を選択
+
+            // 今日の課題と日付を保存
+            sharedPrefs.edit()
+                .putString("dailyTask", randomTask)
+                .putString("lastTaskDate", today)
+                .putStringSet("lastThreeTasks", (lastThreeTasks + randomTask).toMutableSet())
+                .apply()
+
+            return randomTask
+        }
     }
 
     override fun onDestroyView() {
