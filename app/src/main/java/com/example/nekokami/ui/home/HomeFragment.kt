@@ -36,6 +36,12 @@ class HomeFragment : Fragment() {
         val textView: TextView = binding.homeTextMessage
         val constraintLayout: ConstraintLayout = binding.root
         val button3: Button = binding.button3
+        val button: Button = binding.button // 「できた」ボタンを取得
+        val button2: Button = binding.button2 // 「さぼった」ボタンを取得
+
+        // ボタンを最初に非表示にする
+        button.visibility = View.GONE
+        button2.visibility = View.GONE
 
         val messages = arrayOf(
             "こんにちは！\nぼくは猫神様！",
@@ -43,28 +49,28 @@ class HomeFragment : Fragment() {
             "ところで君\n人生変える覚悟ある？？",
             "まあ、選択肢なんて\nないんだけどね♪ﾆｬﾊ",
             "今日から君に一日一つ\n課題を出すよ！",
-            "その課題をやればやるほど\nぼくも君も、成長していくんだ！",
+            "その課題をやればやるほど\nぼくも君も、\n成長していくんだ！",
             "課題を達成したら、\n「できた」ボタンを押してね！",
-            "嘘をついたり、さぼったりしたら、どうなるか\nわかってるよね...？",
+            "嘘をついたり、\nさぼったりしたら、\nどうなるかわかってるよね...？",
             "下の「契約」ボタンを押して\n僕と契約しよう！",
             "ありがとう！\n今日からよろしくね！",
             "それじゃあ、\n今日の課題を発表するね！",
-            "今日の課題は\n【${getDailyTask()}】だよ！\n達成できるかな？"
+            "今日の課題は\n【${getDailyTask()}】\nだよ！達成できるかな？"
         )
 
         val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
         val isFirstLaunch = sharedPrefs.getBoolean("isFirstLaunch", true)
 
         if (isFirstLaunch) {
-            displayMessage(textView, constraintLayout, button3, messages, isFirstLaunch)
+            displayMessage(textView, constraintLayout, button3, button, button2, messages, isFirstLaunch)
         } else {
-            displayDailyTask(textView, constraintLayout)
+            displayDailyTask(textView, constraintLayout, button, button2)
         }
 
         return root
     }
 
-    private fun displayMessage(textView: TextView, layout: ConstraintLayout, button: Button, messages: Array<String>, isFirstLaunch: Boolean = false) {
+    private fun displayMessage(textView: TextView, layout: ConstraintLayout, button3: Button, button: Button, button2: Button, messages: Array<String>, isFirstLaunch: Boolean = false) {
         val runnable = object : Runnable {
             var charIndex = 0
             override fun run() {
@@ -82,19 +88,24 @@ class HomeFragment : Fragment() {
 
                     // 初回起動時 かつ 契約ボタンを押す直前のセリフの場合のみボタンを表示
                     if (isFirstLaunch && messageIndex == 8) {
-                        button.visibility = View.VISIBLE
-                        button.setOnClickListener {
-                            button.visibility = View.INVISIBLE
+                        button3.visibility = View.VISIBLE
+                        button3.setOnClickListener {
+                            button3.visibility = View.INVISIBLE
                             messageIndex++
                             if (messageIndex < messages.size) {
                                 charIndex = 0
                                 textView.text = ""
-                                displayMessage(textView, layout, button, messages, false)
+                                displayMessage(textView, layout, button3, button, button2, messages, false)
                             }
                             // すべてのセリフを表示し終わったら、初回起動フラグをfalseに
                             val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
                             sharedPrefs.edit().putBoolean("isFirstLaunch", false).apply()
                         }
+                    } else if (messageIndex > 10) { // 初回起動時の最後のセリフの場合
+                        handler.postDelayed({
+                            button.visibility = View.VISIBLE
+                            button2.visibility = View.VISIBLE
+                        }, 1000) // 1秒後に表示
                     } else { // それ以外の場合は画面タップで次に進む
                         layout.setOnClickListener {
                             messageIndex++
@@ -111,15 +122,21 @@ class HomeFragment : Fragment() {
         handler.post(runnable)
     }
 
-    private fun displayDailyTask(textView: TextView, layout: ConstraintLayout) {
+    private fun displayDailyTask(textView: TextView, layout: ConstraintLayout, button: Button, button2: Button) {
         val dailyTask = getDailyTask()
 
         val messages = arrayOf(
             "やっほー！\nまた会ったね！",
-            "今日の課題は\n【${dailyTask}】だよ！\n達成できるかな？"
+            "今日の課題は\n【${dailyTask}】\nだよ！達成できるかな？"
         )
         messageIndex = 0
-        displayMessage(textView, layout, binding.button3, messages, false)
+        displayMessage(textView, layout, binding.button3, button, button2, messages, false)
+
+        // 課題発表の後にボタンを表示
+        handler.postDelayed({
+            button.visibility = View.VISIBLE
+            button2.visibility = View.VISIBLE
+        }, 1000) // 1秒後に表示 (アニメーション表示が終わるのを待つ)
     }
 
     private fun getDailyTask(): String {
