@@ -26,6 +26,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
     private val handler = Handler(Looper.getMainLooper())
     private var messageIndex = 0
+    private lateinit var constraintLayout: ConstraintLayout
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,6 +36,7 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
         val textView: TextView = binding.homeTextMessage
+        constraintLayout = binding.root // ConstraintLayout を初期化
         val constraintLayout: ConstraintLayout = binding.root
         val button3: Button = binding.button3
         val button: Button = binding.button // 「できた」ボタンを取得
@@ -67,7 +69,7 @@ class HomeFragment : Fragment() {
         }
 
         button.setOnClickListener {
-            showFeedbackDialog()
+            showFeedbackDialog(textView, button) // textView と buttonを渡す
         }
 
         return root
@@ -175,7 +177,7 @@ class HomeFragment : Fragment() {
         sharedPrefs.edit().putString(feedbackKey, "$dailyTask\n$feedback").apply()
     }
 
-    private fun showFeedbackDialog() {
+    private fun showFeedbackDialog(textView: TextView, button: Button) {
         val builder = AlertDialog.Builder(requireContext())
         val inflater = layoutInflater
         val dialogLayout = inflater.inflate(R.layout.dialog_feedback, null)
@@ -184,15 +186,38 @@ class HomeFragment : Fragment() {
         with(builder) {
             setTitle("感想")
             setView(dialogLayout)
-            setPositiveButton("OK") { _, _ ->
+            setPositiveButton("OK") { dialog, which ->
                 val feedback = editTextFeedback.text.toString()
-                saveFeedback(feedback) // 感想を保存する関数を呼び出す
+                saveFeedback(feedback)
+                button.visibility = View.GONE
+                displayCompleteMessage(textView, constraintLayout) // クラスのプロパティを渡す
             }
-            setNegativeButton("キャンセル") { _, _ ->
-                // キャンセルボタンを押した時の処理
+            setNegativeButton("キャンセル") { dialog, which ->
+                // キャンセルボタンを押した時の処理 (必要があれば)
             }
             show()
         }
+    }
+
+    private fun displayCompleteMessage(textView: TextView, layout: ConstraintLayout) { // layout を引数に追加
+        val message = "達成おめでとう！\nまた明日課題出すね！\n楽しみにしててね！"
+        var charIndex = 0
+        val runnable = object : Runnable {
+            override fun run() {
+                if (charIndex < message.length) {
+                    textView.text = HtmlCompat.fromHtml(
+                        message.substring(0, charIndex + 1).replace("\n", "<br>"),
+                        HtmlCompat.FROM_HTML_MODE_LEGACY
+                    )
+                    charIndex++
+                    handler.postDelayed(this, 50) // 50ミリ秒ごとに次の文字を表示
+                } else {
+                    // メッセージ表示完了後にタップリスナーを無効化
+                    layout.setOnClickListener(null)
+                }
+            }
+        }
+        handler.post(runnable)
     }
 
     override fun onDestroyView() {
