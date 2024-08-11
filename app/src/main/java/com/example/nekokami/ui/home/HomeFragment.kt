@@ -16,6 +16,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.nekokami.R
 import com.example.nekokami.databinding.FragmentHomeBinding
 import java.text.SimpleDateFormat
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import java.util.*
 
 class HomeFragment : Fragment() {
@@ -62,6 +64,10 @@ class HomeFragment : Fragment() {
             displayMessage(textView, constraintLayout, button3, button, messages, isFirstLaunch)
         } else {
             displayDailyTask(textView, constraintLayout, button)
+        }
+
+        button.setOnClickListener {
+            showFeedbackDialog()
         }
 
         return root
@@ -158,6 +164,26 @@ class HomeFragment : Fragment() {
                 .apply()
 
             return randomTask
+        }
+    }
+
+    private fun showFeedbackDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        val inflater = layoutInflater
+        val dialogLayout = inflater.inflate(R.layout.dialog_feedback, null)
+        val editTextFeedback = dialogLayout.findViewById<EditText>(R.id.editTextFeedback)
+
+        with(builder) {
+            setTitle("感想")
+            setView(dialogLayout)
+            setPositiveButton("OK") { _, _ ->
+                val feedback = editTextFeedback.text.toString()
+                // TODO: 入力された感想を処理する (例: ログ出力、保存など)
+            }
+            setNegativeButton("キャンセル") { _, _ ->
+                // キャンセルボタンを押した時の処理
+            }
+            show()
         }
     }
 
