@@ -32,6 +32,7 @@ class DashboardFragment : Fragment() {
         val calendarView: CalendarView = binding.calendarView
         val selectedDateTextView: TextView = binding.textViewSelectedDate
         val taskTextView: TextView = binding.textViewTask
+        val completionStatusTextView: TextView = binding.textViewCompletionStatus // 達成状況表示用のTextView
         val feedbackTextView: TextView = binding.textViewFeedback
 
         calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
@@ -43,6 +44,7 @@ class DashboardFragment : Fragment() {
 
             val feedbackData = loadFeedbackForDate(formattedDate)
             taskTextView.text = "課題: ${feedbackData?.task ?: ""}"
+            completionStatusTextView.text = "達成状況: ${feedbackData?.completionStatus ?: ""}" // 達成状況を表示
             feedbackTextView.text = "感想: ${feedbackData?.feedback ?: ""}"
         }
 
@@ -58,13 +60,23 @@ class DashboardFragment : Fragment() {
             val parts = feedback.split("\n")
             val task = parts[0]
             val feedbackText = parts.drop(1).joinToString("\n")
-            FeedbackData(date, task, feedbackText)
+            val completionStatus = getCompletionStatusForDate(date)
+            FeedbackData(date, task, feedbackText, completionStatus)
         } else {
             null
         }
     }
 
-    data class FeedbackData(val date: String, val task: String, val feedback: String)
+    private fun getCompletionStatusForDate(date: String): String {
+        val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
+        val feedbackKey = "feedback_$date"
+        val feedback = sharedPrefs.getString(feedbackKey, null)
+
+        // 感想が入力されている場合は「達成！」、そうでない場合は「達成できず...」
+        return if (feedback != null) "達成！" else "達成できず..."
+    }
+
+    data class FeedbackData(val date: String, val task: String, val feedback: String, val completionStatus: String)
 
     override fun onDestroyView() {
         super.onDestroyView()

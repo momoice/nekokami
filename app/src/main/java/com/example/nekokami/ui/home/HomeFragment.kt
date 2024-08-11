@@ -177,9 +177,9 @@ class HomeFragment : Fragment() {
 
     private fun saveFeedback(feedback: String) {
         val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
-        val today = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
-        val dailyTask = sharedPrefs.getString("dailyTask", "") ?: "" // 今日の課題を取得
-        val feedbackKey = "feedback_$today" // 保存キー (日付_感想)
+        val today = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(Date()) // フォーマットを yyyy/MM/dd に変更
+        val dailyTask = sharedPrefs.getString("dailyTask", "") ?: ""
+        val feedbackKey = "feedback_$today"
         sharedPrefs.edit().putString(feedbackKey, "$dailyTask\n$feedback").apply()
     }
 
