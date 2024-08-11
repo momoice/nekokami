@@ -28,6 +28,10 @@ class HomeFragment : Fragment() {
     private var messageIndex = 0
     private lateinit var constraintLayout: ConstraintLayout
 
+    companion object {
+        private const val PREF_KEY_IS_TASK_COMPLETED = "isTaskCompleted" // 達成フラグのキー
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -64,6 +68,8 @@ class HomeFragment : Fragment() {
 
         if (isFirstLaunch) {
             displayMessage(textView, constraintLayout, button3, button, messages, isFirstLaunch)
+        } else if (isTaskCompletedToday()) { // 達成フラグを確認
+            displayCompleteMessage(textView, constraintLayout)
         } else {
             displayDailyTask(textView, constraintLayout, button)
         }
@@ -191,6 +197,7 @@ class HomeFragment : Fragment() {
                 saveFeedback(feedback)
                 button.visibility = View.GONE
                 displayCompleteMessage(textView, constraintLayout) // クラスのプロパティを渡す
+                saveTaskCompletedStatus(true) // 達成フラグを true に設定
             }
             setNegativeButton("キャンセル") { dialog, which ->
                 // キャンセルボタンを押した時の処理 (必要があれば)
@@ -218,6 +225,16 @@ class HomeFragment : Fragment() {
             }
         }
         handler.post(runnable)
+    }
+
+    private fun saveTaskCompletedStatus(isCompleted: Boolean) {
+        val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
+        sharedPrefs.edit().putBoolean(PREF_KEY_IS_TASK_COMPLETED, isCompleted).apply()
+    }
+
+    private fun isTaskCompletedToday(): Boolean {
+        val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
+        return sharedPrefs.getBoolean(PREF_KEY_IS_TASK_COMPLETED, false)
     }
 
     override fun onDestroyView() {
