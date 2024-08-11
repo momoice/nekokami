@@ -30,18 +30,15 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
         val textView: TextView = binding.homeTextMessage
         val constraintLayout: ConstraintLayout = binding.root
         val button3: Button = binding.button3
         val button: Button = binding.button // 「できた」ボタンを取得
-        val button2: Button = binding.button2 // 「さぼった」ボタンを取得
 
         // ボタンを最初に非表示にする
         button.visibility = View.GONE
-        button2.visibility = View.GONE
 
         val messages = arrayOf(
             "こんにちは！\nぼくは猫神様！",
@@ -62,15 +59,15 @@ class HomeFragment : Fragment() {
         val isFirstLaunch = sharedPrefs.getBoolean("isFirstLaunch", true)
 
         if (isFirstLaunch) {
-            displayMessage(textView, constraintLayout, button3, button, button2, messages, isFirstLaunch)
+            displayMessage(textView, constraintLayout, button3, button, messages, isFirstLaunch)
         } else {
-            displayDailyTask(textView, constraintLayout, button, button2)
+            displayDailyTask(textView, constraintLayout, button)
         }
 
         return root
     }
 
-    private fun displayMessage(textView: TextView, layout: ConstraintLayout, button3: Button, button: Button, button2: Button, messages: Array<String>, isFirstLaunch: Boolean = false) {
+    private fun displayMessage(textView: TextView, layout: ConstraintLayout, button3: Button, button: Button, messages: Array<String>, isFirstLaunch: Boolean = false) {
         val runnable = object : Runnable {
             var charIndex = 0
             override fun run() {
@@ -95,7 +92,7 @@ class HomeFragment : Fragment() {
                             if (messageIndex < messages.size) {
                                 charIndex = 0
                                 textView.text = ""
-                                displayMessage(textView, layout, button3, button, button2, messages, false)
+                                displayMessage(textView, layout, button3, button, messages, false)
                             }
                             // すべてのセリフを表示し終わったら、初回起動フラグをfalseに
                             val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
@@ -104,8 +101,7 @@ class HomeFragment : Fragment() {
                     } else if (messageIndex > 10) { // 初回起動時の最後のセリフの場合
                         handler.postDelayed({
                             button.visibility = View.VISIBLE
-                            button2.visibility = View.VISIBLE
-                        }, 1000) // 1秒後に表示
+                        }, 0) // 1秒後に表示
                     } else { // それ以外の場合は画面タップで次に進む
                         layout.setOnClickListener {
                             messageIndex++
@@ -122,7 +118,7 @@ class HomeFragment : Fragment() {
         handler.post(runnable)
     }
 
-    private fun displayDailyTask(textView: TextView, layout: ConstraintLayout, button: Button, button2: Button) {
+    private fun displayDailyTask(textView: TextView, layout: ConstraintLayout, button: Button) {
         val dailyTask = getDailyTask()
 
         val messages = arrayOf(
@@ -130,13 +126,12 @@ class HomeFragment : Fragment() {
             "今日の課題は\n【${dailyTask}】\nだよ！達成できるかな？"
         )
         messageIndex = 0
-        displayMessage(textView, layout, binding.button3, button, button2, messages, false)
+        displayMessage(textView, layout, binding.button3, button, messages, false)
 
         // 課題発表の後にボタンを表示
         handler.postDelayed({
             button.visibility = View.VISIBLE
-            button2.visibility = View.VISIBLE
-        }, 1000) // 1秒後に表示 (アニメーション表示が終わるのを待つ)
+        }, 0) // 1秒後に表示 (アニメーション表示が終わるのを待つ)
     }
 
     private fun getDailyTask(): String {
