@@ -167,6 +167,14 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun saveFeedback(feedback: String) {
+        val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
+        val today = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
+        val dailyTask = sharedPrefs.getString("dailyTask", "") ?: "" // 今日の課題を取得
+        val feedbackKey = "feedback_$today" // 保存キー (日付_感想)
+        sharedPrefs.edit().putString(feedbackKey, "$dailyTask\n$feedback").apply()
+    }
+
     private fun showFeedbackDialog() {
         val builder = AlertDialog.Builder(requireContext())
         val inflater = layoutInflater
@@ -178,7 +186,7 @@ class HomeFragment : Fragment() {
             setView(dialogLayout)
             setPositiveButton("OK") { _, _ ->
                 val feedback = editTextFeedback.text.toString()
-                // TODO: 入力された感想を処理する (例: ログ出力、保存など)
+                saveFeedback(feedback) // 感想を保存する関数を呼び出す
             }
             setNegativeButton("キャンセル") { _, _ ->
                 // キャンセルボタンを押した時の処理
