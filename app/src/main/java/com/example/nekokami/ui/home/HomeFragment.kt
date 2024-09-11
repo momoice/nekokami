@@ -1,6 +1,10 @@
 package com.example.nekokami.ui.home
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -8,17 +12,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.example.nekokami.R
 import com.example.nekokami.databinding.FragmentHomeBinding
 import java.text.SimpleDateFormat
-import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class HomeFragment : Fragment() {
 
@@ -241,5 +246,43 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
         handler.removeCallbacksAndMessages(null)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // 0:00にリセットするアラームを設定
+        setResetAlarm()
+    }
+
+    private fun setResetAlarm() {
+        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(requireContext(), ResetTaskCompletedReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = System.currentTimeMillis()
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+
+        // 今日の0:00を過ぎている場合は明日の0:00に設定
+        if (calendar.timeInMillis < System.currentTimeMillis()) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1)
+        }
+
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            pendingIntent
+        )
+    }
+
+    class ResetTaskCompletedReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val sharedPrefs = context.getSharedPreferences("your_app_preferences", Context.MODE_PRIVATE) // 適切な SharedPreferences 名に変更
+            sharedPrefs.edit().putBoolean(HomeFragment.PREF_KEY_IS_TASK_COMPLETED, false).apply()
+        }
     }
 }
