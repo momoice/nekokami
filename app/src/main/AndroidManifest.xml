@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Nekokami"
+
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
@@ -23,6 +24,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".ui.home.HomeFragment$ResetTaskCompletedReceiver" />
+        <receiver android:name=".ui.home.ResetTaskCompletedReceiver" />
+
     </application>
 </manifest>

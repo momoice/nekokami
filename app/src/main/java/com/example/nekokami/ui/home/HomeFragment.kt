@@ -283,11 +283,4 @@ class HomeFragment : Fragment() {
             pendingIntent
         )
     }
-
-    class ResetTaskCompletedReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val sharedPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            sharedPrefs.edit().putBoolean(PREF_KEY_IS_TASK_COMPLETED, false).apply()
-        }
-    }
 }
