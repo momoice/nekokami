@@ -34,7 +34,8 @@ class HomeFragment : Fragment() {
     private lateinit var constraintLayout: ConstraintLayout
 
     companion object {
-        private const val PREF_KEY_IS_TASK_COMPLETED = "isTaskCompleted" // 達成フラグのキー
+        internal const val PREFS_NAME = "app_prefs"
+        internal const val PREF_KEY_IS_TASK_COMPLETED = "isTaskCompleted" // 達成フラグのキー
     }
 
     override fun onCreateView(
@@ -46,7 +47,6 @@ class HomeFragment : Fragment() {
         val root: View = binding.root
         val textView: TextView = binding.homeTextMessage
         constraintLayout = binding.root // ConstraintLayout を初期化
-        val constraintLayout: ConstraintLayout = binding.root
         val button3: Button = binding.button3
         val button: Button = binding.button // 「できた」ボタンを取得
 
@@ -68,7 +68,7 @@ class HomeFragment : Fragment() {
             "今日の課題は\n【${getDailyTask()}】\nだよ！達成できるかな？"
         )
 
-        val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
+        val sharedPrefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val isFirstLaunch = sharedPrefs.getBoolean("isFirstLaunch", true)
 
         if (isFirstLaunch) {
@@ -114,7 +114,7 @@ class HomeFragment : Fragment() {
                                 displayMessage(textView, layout, button3, button, messages, false)
                             }
                             // すべてのセリフを表示し終わったら、初回起動フラグをfalseに
-                            val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
+                            val sharedPrefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                             sharedPrefs.edit().putBoolean("isFirstLaunch", false).apply()
                         }
                     } else if (messageIndex > 10) { // 初回起動時の最後のセリフの場合
@@ -154,7 +154,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun getDailyTask(): String {
-        val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
+        val sharedPrefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val lastTaskDate = sharedPrefs.getString("lastTaskDate", "") ?: ""
         val lastThreeTasks = sharedPrefs.getStringSet("lastThreeTasks", mutableSetOf()) ?: mutableSetOf()
 
@@ -181,7 +181,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun saveFeedback(feedback: String) {
-        val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
+        val sharedPrefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val today = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(Date()) // フォーマットを yyyy/MM/dd に変更
         val dailyTask = sharedPrefs.getString("dailyTask", "") ?: ""
         val feedbackKey = "feedback_$today"
@@ -233,12 +233,12 @@ class HomeFragment : Fragment() {
     }
 
     private fun saveTaskCompletedStatus(isCompleted: Boolean) {
-        val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
+        val sharedPrefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         sharedPrefs.edit().putBoolean(PREF_KEY_IS_TASK_COMPLETED, isCompleted).apply()
     }
 
     private fun isTaskCompletedToday(): Boolean {
-        val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
+        val sharedPrefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         return sharedPrefs.getBoolean(PREF_KEY_IS_TASK_COMPLETED, false)
     }
 
@@ -257,7 +257,12 @@ class HomeFragment : Fragment() {
     private fun setResetAlarm() {
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(requireContext(), ResetTaskCompletedReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getBroadcast(
+            requireContext(),
+            0,
+            intent,
+            PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
 
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = System.currentTimeMillis()
@@ -281,8 +286,8 @@ class HomeFragment : Fragment() {
 
     class ResetTaskCompletedReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val sharedPrefs = context.getSharedPreferences("your_app_preferences", Context.MODE_PRIVATE) // 適切な SharedPreferences 名に変更
-            sharedPrefs.edit().putBoolean(HomeFragment.PREF_KEY_IS_TASK_COMPLETED, false).apply()
+            val sharedPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            sharedPrefs.edit().putBoolean(PREF_KEY_IS_TASK_COMPLETED, false).apply()
         }
     }
 }

@@ -23,7 +23,6 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".ResetTaskCompletedReceiver" />
+        <receiver android:name=".ui.home.HomeFragment$ResetTaskCompletedReceiver" />
     </application>
-
 </manifest>
