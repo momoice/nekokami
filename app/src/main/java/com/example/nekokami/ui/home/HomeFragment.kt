@@ -151,29 +151,27 @@ class HomeFragment : Fragment() {
     private fun getDailyTask(): String {
         val sharedPrefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val lastTaskDate = sharedPrefs.getString("lastTaskDate", "") ?: ""
-        val lastThreeTasks = sharedPrefs.getStringSet("lastThreeTasks", mutableSetOf()) ?: mutableSetOf()
+        val today = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(Date())
 
-        val today = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
         if (lastTaskDate == today) {
             // 今日の課題はすでに表示済みなので、保存されている課題を返す
             return sharedPrefs.getString("dailyTask", "") ?: ""
         } else {
             // 新しい課題を選択
             val availableTasks = resources.getStringArray(R.array.tasks).toMutableList()
-            availableTasks.removeAll(lastThreeTasks) // 過去3日間の課題を除外
-
             val randomTask = availableTasks.random() // ランダムに課題を選択
 
             // 今日の課題と日付を保存
             sharedPrefs.edit()
                 .putString("dailyTask", randomTask)
                 .putString("lastTaskDate", today)
-                .putStringSet("lastThreeTasks", (lastThreeTasks + randomTask).toMutableSet())
+                .putString("task_$today", randomTask) // 日付ごとの課題を保存
                 .apply()
 
             return randomTask
         }
     }
+
 
     private fun saveFeedback(feedback: String) {
         val sharedPrefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)

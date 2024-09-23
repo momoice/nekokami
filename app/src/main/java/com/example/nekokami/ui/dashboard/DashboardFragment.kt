@@ -52,29 +52,29 @@ class DashboardFragment : Fragment() {
     }
 
     private fun loadFeedbackForDate(date: String): FeedbackData? {
-        val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
+        val sharedPrefs = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val feedbackKey = "feedback_$date"
         val feedback = sharedPrefs.getString(feedbackKey, null)
+        val taskKey = "task_$date"
+        val task = sharedPrefs.getString(taskKey, "課題なし") ?: "課題なし"
 
-        return if (feedback != null) {
-            val parts = feedback.split("\n")
-            val task = parts[0]
-            val feedbackText = parts.drop(1).joinToString("\n")
-            val completionStatus = getCompletionStatusForDate(date)
-            FeedbackData(date, task, feedbackText, completionStatus)
+        if (feedback != null) {
+            val feedbackText = feedback // 既にタスクは別で取得しているため
+            val completionStatus = "達成！"
+            return FeedbackData(date, task, feedbackText, completionStatus)
         } else {
-            null
+            val completionStatus = "達成できず..."
+            return FeedbackData(date, task, "", completionStatus)
         }
     }
 
-    private fun getCompletionStatusForDate(date: String): String {
-        val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
-        val feedbackKey = "feedback_$date"
-        val feedback = sharedPrefs.getString(feedbackKey, null)
 
-        // 感想が入力されている場合は「達成！」、そうでない場合は「達成できず...」
-        return if (feedback != null) "達成！" else "達成できず..."
+    private fun getTaskForDate(date: String): String {
+        val sharedPrefs = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val taskKey = "task_$date"
+        return sharedPrefs.getString(taskKey, "課題なし") ?: "課題なし"
     }
+
 
     data class FeedbackData(val date: String, val task: String, val feedback: String, val completionStatus: String)
 
