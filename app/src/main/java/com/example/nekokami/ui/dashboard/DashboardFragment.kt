@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.CalendarView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.example.nekokami.databinding.FragmentDashboardBinding
 import java.text.SimpleDateFormat
 import java.util.*
@@ -18,21 +17,20 @@ class DashboardFragment : Fragment() {
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
 
+    data class FeedbackData(val date: String, val task: String, val feedback: String, val completionStatus: String)
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val dashboardViewModel =
-            ViewModelProvider(this).get(DashboardViewModel::class.java)
-
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val calendarView: CalendarView = binding.calendarView
         val selectedDateTextView: TextView = binding.textViewSelectedDate
         val taskTextView: TextView = binding.textViewTask
-        val completionStatusTextView: TextView = binding.textViewCompletionStatus // 達成状況表示用のTextView
+        val completionStatusTextView: TextView = binding.textViewCompletionStatus
         val feedbackTextView: TextView = binding.textViewFeedback
 
         calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
@@ -43,9 +41,23 @@ class DashboardFragment : Fragment() {
             selectedDateTextView.text = formattedDate
 
             val feedbackData = loadFeedbackForDate(formattedDate)
-            taskTextView.text = "課題: ${feedbackData?.task ?: ""}"
-            completionStatusTextView.text = "達成状況: ${feedbackData?.completionStatus ?: ""}" // 達成状況を表示
-            feedbackTextView.text = "感想: ${feedbackData?.feedback ?: ""}"
+            taskTextView.text = "課題: ${feedbackData?.task ?: "課題なし"}"
+
+            // 達成状況の表示
+            if (!feedbackData?.completionStatus.isNullOrEmpty()) {
+                completionStatusTextView.text = "達成状況: ${feedbackData?.completionStatus}"
+                completionStatusTextView.visibility = View.VISIBLE
+            } else {
+                completionStatusTextView.visibility = View.GONE
+            }
+
+            // 感想の表示
+            if (!feedbackData?.feedback.isNullOrEmpty()) {
+                feedbackTextView.text = "感想: ${feedbackData?.feedback}"
+                feedbackTextView.visibility = View.VISIBLE
+            } else {
+                feedbackTextView.visibility = View.GONE
+            }
         }
 
         return root
@@ -58,8 +70,17 @@ class DashboardFragment : Fragment() {
         val taskKey = "task_$date"
         val task = sharedPrefs.getString(taskKey, "課題なし") ?: "課題なし"
 
+        val sdf = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+        val selectedDate = sdf.parse(date)
+        val todayDate = sdf.parse(sdf.format(Date()))
+
+        if (selectedDate != null && selectedDate.after(todayDate)) {
+            // 未来の日付の場合、達成状況と感想を空白にする
+            return FeedbackData(date, task, "", "")
+        }
+
         if (feedback != null) {
-            val feedbackText = feedback // 既にタスクは別で取得しているため
+            val feedbackText = feedback
             val completionStatus = "達成！"
             return FeedbackData(date, task, feedbackText, completionStatus)
         } else {
@@ -67,16 +88,6 @@ class DashboardFragment : Fragment() {
             return FeedbackData(date, task, "", completionStatus)
         }
     }
-
-
-    private fun getTaskForDate(date: String): String {
-        val sharedPrefs = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        val taskKey = "task_$date"
-        return sharedPrefs.getString(taskKey, "課題なし") ?: "課題なし"
-    }
-
-
-    data class FeedbackData(val date: String, val task: String, val feedback: String, val completionStatus: String)
 
     override fun onDestroyView() {
         super.onDestroyView()

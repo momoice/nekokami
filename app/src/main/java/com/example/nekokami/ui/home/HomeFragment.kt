@@ -175,11 +175,11 @@ class HomeFragment : Fragment() {
 
     private fun saveFeedback(feedback: String) {
         val sharedPrefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val today = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(Date()) // フォーマットを yyyy/MM/dd に変更
-        val dailyTask = sharedPrefs.getString("dailyTask", "") ?: ""
+        val today = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(Date())
         val feedbackKey = "feedback_$today"
-        sharedPrefs.edit().putString(feedbackKey, "$dailyTask\n$feedback").apply()
+        sharedPrefs.edit().putString(feedbackKey, feedback).apply()
     }
+
 
     private fun showFeedbackDialog(textView: TextView, button: Button) {
         val builder = AlertDialog.Builder(requireContext())
