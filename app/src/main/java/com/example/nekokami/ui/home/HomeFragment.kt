@@ -1,10 +1,6 @@
 package com.example.nekokami.ui.home
 
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -21,7 +17,6 @@ import androidx.fragment.app.Fragment
 import com.example.nekokami.R
 import com.example.nekokami.databinding.FragmentHomeBinding
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
