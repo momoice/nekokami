@@ -265,10 +265,10 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         // 0:00にリセットするアラームを設定
-        setResetAlarm()
+        //setResetAlarm()
     }
 
-    private fun setResetAlarm() {
+    /*private fun setResetAlarm() {
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(requireContext(), ResetTaskCompletedReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
@@ -296,5 +296,5 @@ class HomeFragment : Fragment() {
             AlarmManager.INTERVAL_DAY,
             pendingIntent
         )
-    }
+    }*/
 }

@@ -24,7 +24,6 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".ui.home.ResetTaskCompletedReceiver" />
 
     </application>
 </manifest>
