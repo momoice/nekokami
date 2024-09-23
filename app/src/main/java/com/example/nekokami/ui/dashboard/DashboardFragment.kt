@@ -74,19 +74,27 @@ class DashboardFragment : Fragment() {
         val selectedDate = sdf.parse(date)
         val todayDate = sdf.parse(sdf.format(Date()))
 
-        if (selectedDate != null && selectedDate.after(todayDate)) {
-            // 未来の日付の場合、達成状況と感想を空白にする
-            return FeedbackData(date, task, "", "")
+        if (selectedDate != null) {
+            when {
+                selectedDate.after(todayDate) -> {
+                    // 未来の日付の場合、達成状況と感想を空白にする
+                    return FeedbackData(date, task, "", "")
+                }
+                selectedDate.before(todayDate) -> {
+                    // 過去の日付の場合
+                    val completionStatus = if (feedback != null) "達成！" else "達成できず..."
+                    val feedbackText = feedback ?: ""
+                    return FeedbackData(date, task, feedbackText, completionStatus)
+                }
+                else -> {
+                    // 今日の日付の場合
+                    val completionStatus = if (feedback != null) "達成！" else "課題進行中"
+                    val feedbackText = feedback ?: ""
+                    return FeedbackData(date, task, feedbackText, completionStatus)
+                }
+            }
         }
-
-        if (feedback != null) {
-            val feedbackText = feedback
-            val completionStatus = "達成！"
-            return FeedbackData(date, task, feedbackText, completionStatus)
-        } else {
-            val completionStatus = "達成できず..."
-            return FeedbackData(date, task, "", completionStatus)
-        }
+        return null
     }
 
     override fun onDestroyView() {
