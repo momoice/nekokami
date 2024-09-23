@@ -234,13 +234,27 @@ class HomeFragment : Fragment() {
 
     private fun saveTaskCompletedStatus(isCompleted: Boolean) {
         val sharedPrefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        sharedPrefs.edit().putBoolean(PREF_KEY_IS_TASK_COMPLETED, isCompleted).apply()
+        val editor = sharedPrefs.edit()
+        editor.putBoolean(PREF_KEY_IS_TASK_COMPLETED, isCompleted)
+        if (isCompleted) {
+            val today = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
+            editor.putString("taskCompletedDate", today)
+        }
+        editor.apply()
     }
+
 
     private fun isTaskCompletedToday(): Boolean {
         val sharedPrefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        return sharedPrefs.getBoolean(PREF_KEY_IS_TASK_COMPLETED, false)
+        val isCompleted = sharedPrefs.getBoolean(PREF_KEY_IS_TASK_COMPLETED, false)
+        if (isCompleted) {
+            val taskCompletedDate = sharedPrefs.getString("taskCompletedDate", "") ?: ""
+            val today = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
+            return taskCompletedDate == today
+        }
+        return false
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
