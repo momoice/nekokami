@@ -1,4 +1,4 @@
-package com.example.nekokami.ui.dashboard
+package com.nekopath.nekokami.ui.dashboard
 
 import android.content.Context
 import android.os.Bundle
@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.CalendarView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import com.example.nekokami.databinding.FragmentDashboardBinding
+import com.nekopath.nekokami.databinding.FragmentDashboardBinding
 import java.text.SimpleDateFormat
 import java.util.*
 

@@ -1,4 +1,4 @@
-package com.example.nekokami.ui.notifications
+package com.nekopath.nekokami.ui.notifications
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.nekokami.databinding.FragmentNotificationsBinding
+import com.nekopath.nekokami.databinding.FragmentNotificationsBinding
 
 class NotificationsFragment : Fragment() {
 

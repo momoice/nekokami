@@ -1,4 +1,4 @@
-package com.example.nekokami.ui.home
+package com.nekopath.nekokami.ui.home
 
 import android.content.Context
 import android.os.Bundle
@@ -14,8 +14,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
-import com.example.nekokami.R
-import com.example.nekokami.databinding.FragmentHomeBinding
+import com.nekopath.nekokami.R
+import com.nekopath.nekokami.databinding.FragmentHomeBinding
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

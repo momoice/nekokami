@@ -1,4 +1,4 @@
-package com.example.nekokami.ui.notifications
+package com.nekopath.nekokami.ui.notifications
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

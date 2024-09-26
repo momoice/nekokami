@@ -1,4 +1,4 @@
-package com.example.nekokami
+package com.nekopath.nekokami
 
 import org.junit.Test
 
