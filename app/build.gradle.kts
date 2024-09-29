@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.nekokami"
+    namespace = "com.nekopath.nekokami"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.nekokami"
+        applicationId = "com.nekopath.nekokami"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
