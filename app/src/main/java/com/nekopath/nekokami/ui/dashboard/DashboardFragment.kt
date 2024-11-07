@@ -33,7 +33,7 @@ class DashboardFragment : Fragment() {
         val completionStatusTextView: TextView = binding.textViewCompletionStatus
         val feedbackTextView: TextView = binding.textViewFeedback
 
-        calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
+        calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             val selectedDate = Calendar.getInstance().apply {
                 set(year, month, dayOfMonth)
             }

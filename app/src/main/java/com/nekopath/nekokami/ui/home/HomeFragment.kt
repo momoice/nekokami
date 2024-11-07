@@ -190,14 +190,14 @@ class HomeFragment : Fragment() {
         with(builder) {
             setTitle("感想")
             setView(dialogLayout)
-            setPositiveButton("OK") { dialog, which ->
+            setPositiveButton("OK") { _, _ ->
                 val feedback = editTextFeedback.text.toString()
                 saveFeedback(feedback)
                 button.visibility = View.GONE
                 displayCompleteMessage(textView, constraintLayout) // クラスのプロパティを渡す
                 saveTaskCompletedStatus(true) // 達成フラグを true に設定
             }
-            setNegativeButton("キャンセル") { dialog, which ->
+            setNegativeButton("キャンセル") { _, _ ->
                 // キャンセルボタンを押した時の処理 (必要があれば)
             }
             show()
