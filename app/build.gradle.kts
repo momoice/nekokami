@@ -11,8 +11,9 @@ android {
         applicationId = "com.nekopath.nekokami"
         minSdk = 24
         targetSdk = 34
-        versionCode = 4
-        versionName = "1.0.3"
+        // versionCodeとversionNameは、更新時必ず数値を上げること！
+        versionCode = 5
+        versionName = "1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
